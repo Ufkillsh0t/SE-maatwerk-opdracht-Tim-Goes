@@ -23,7 +23,7 @@ public class AI_Movement : MonoBehaviour, IDamageAble {
         FindGameController();
     }
 
-    void OnCollisionEnter()
+    void OnCollisionEnter() //kijkt of het object collision heeft met een ander object.
     {
         CurrentPos();
     }
@@ -31,7 +31,7 @@ public class AI_Movement : MonoBehaviour, IDamageAble {
     void Update()
     {
         Movement();
-        if(gameObject.GetComponent<Renderer>().material.color.r >= 0.001F)
+        if(gameObject.GetComponent<Renderer>().material.color.r >= 0.001F) //verandert de kleur van het object naar de normale kleur.
         {
             Color c = gameObject.GetComponent<Renderer>().material.color;
             c.r = c.r - 0.001F;
@@ -49,7 +49,7 @@ public class AI_Movement : MonoBehaviour, IDamageAble {
         }
     }
 
-    private void FindGameController()
+    private void FindGameController() //zoekt naar de gamecontroller.
     {
         GameObject gameControllerObject = GameObject.FindGameObjectWithTag("GameController");
         if (gameControllerObject != null)
@@ -62,15 +62,15 @@ public class AI_Movement : MonoBehaviour, IDamageAble {
         }
     }
 
-    private void Movement()
+    private void Movement() //deze methode zorgt voor de beweging van de AI. 
     {
         CharacterController cc = GetComponent<CharacterController>();
-        if (cc.isGrounded)
+        if (cc.isGrounded) //kijkt of het poppetje zich op de grond bevind.
         {
             v_speed = 0f;
             MoveRandom(cc);
         }
-        else if(gameObject.transform.position.y < -100)
+        else if(gameObject.transform.position.y < -100) //kijkt of het popptje zich niet onder de y-coörd -100 bevind.
         {
             Debug.Log("Object:" + gameObject.name + " has been destroyed due too being below y: -100");
             Destroy(gameObject);
@@ -78,7 +78,7 @@ public class AI_Movement : MonoBehaviour, IDamageAble {
         else
         {
             v_speed = gravity;
-            cc.SimpleMove(new Vector3(0, v_speed, 0));
+            cc.SimpleMove(new Vector3(0, v_speed, 0)); //Beweegt het poppetje naar beneden op basis van de verticale snelheid.
         }
     }
 
@@ -86,16 +86,17 @@ public class AI_Movement : MonoBehaviour, IDamageAble {
     {
         if(target == new Vector3(0, 0, 0))
         {
-            GenerateNewTarget();
+            GenerateNewTarget(); //genereert een nieuwe positie waar het poppetje naar toe moet lopen.
         }
-        else if((gameObject.transform.position.x < (target.x - 0.5F) || (gameObject.transform.position.x > (target.x + 0.5F)) && (gameObject.transform.position.z < (target.z - 0.5F) || gameObject.transform.position.z > (target.z + 0.5F))))
+        else if((gameObject.transform.position.x < (target.x - 0.5F) || (gameObject.transform.position.x > (target.x + 0.5F)) 
+            && (gameObject.transform.position.z < (target.z - 0.5F) || gameObject.transform.position.z > (target.z + 0.5F))))
         {
             //Debug.Log(target.x.ToString() + " " + target.y.ToString() + " " + target.z.ToString());
             //code voor rotatie naar object en bewegen naar object.
             Vector3 targetDir = target - transform.position;
             float rotate_step = m_rot_speed * Time.deltaTime; //rotatiesnelheid in deltatime.
             Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, rotate_step, 0.0F);
-            transform.rotation = Quaternion.LookRotation(newDir);
+            transform.rotation = Quaternion.LookRotation(newDir); //zorgt er voor dat het poppetje kijkt richting de target positie.
             float m_step = m_speed * Time.deltaTime; //movement speed in deltatime.
             transform.Translate(Vector3.forward * m_step);
             //transform.Rotate(0, UnityEngine.Random.Range((m_rot_speed * -1), m_rot_speed), 0);
@@ -103,7 +104,7 @@ public class AI_Movement : MonoBehaviour, IDamageAble {
         }
         else
         {
-            GenerateNewTarget();
+            GenerateNewTarget(); //genereert een nieuwe positie waar het poppetje naar toe moet lopen.
         }
     }
 
@@ -125,15 +126,15 @@ public class AI_Movement : MonoBehaviour, IDamageAble {
 
     public void DamageCollision(int damage)
     {
-        health -= damage;
+        health -= damage; //trekt het aantal damage van het poppetje zijn health.
         if (health == 0 || health < 0)
         {
             Destroy(gameObject); //Verwijdert de enemy van het spel.
-            gameController.AddScore(damage + enemyDestroyScore);
+            gameController.AddScore(damage + enemyDestroyScore); //voegt een score toe aan de highscore.
         }
         else
         {
-            gameController.AddScore(damage);
+            gameController.AddScore(damage); //voegt een score toe aan de highscore.
         }
         Debug.Log("Object:" + gameObject.name + "[Health]" + health);
     }
@@ -146,15 +147,15 @@ public class AI_Movement : MonoBehaviour, IDamageAble {
         if (health == 0 || health < 0)
         {
             Destroy(gameObject); //Verwijdert de enemy van het spel.
-            gameController.AddScore(damage + enemyDestroyScore);
+            gameController.AddScore(damage + enemyDestroyScore); //voegt een score toe aan de highscore.
         }
         else
         {
-            gameController.AddScore(damage);
+            gameController.AddScore(damage); //voegt een score toe aan de highscore.
         }
         if (damage != 0)
         {
-            DamageColor();
+            DamageColor(); //zorgt er voor dat het object een andere kleur krijgt wanneer die damage heeft gekregen.
         }
         Debug.Log("Object: " + gameObject.name + " [Health] " + health + " [Distance]" + distance + " [Damage-Info] " + damageDiv.ToString() + " - " + damage.ToString());
     }
